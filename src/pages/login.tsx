@@ -7,6 +7,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import Button from "@/components/Button";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 interface FormData {
   username: string;
@@ -55,49 +56,55 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <form
-        className="w-full max-w-md bg-white p-8 rounded shadow-md"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <h2 className="text-2xl font-semibold mb-4">Login</h2>
+      <div className="w-full max-w-md bg-white p-8 rounded shadow-md">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <h2 className="text-2xl font-semibold mb-4">Login</h2>
 
-        <div className="mb-4">
-          <label className="block mb-2">Username</label>
-          <input
-            disabled={isLoading}
-            className={`w-full p-2 border rounded ${
-              errors.username ? "border-red-500" : ""
-            }`}
-            type="text"
-            {...register("username", { required: "กรุณากรอก Username" })}
-          />
-          {errors.username && (
-            <span className="text-red-500">{errors.username.message}</span>
-          )}
+          <div className="mb-4">
+            <label className="block mb-2">Username</label>
+            <input
+              disabled={isLoading}
+              className={`w-full p-2 border rounded ${
+                errors.username ? "border-red-500" : ""
+              }`}
+              type="text"
+              {...register("username", { required: "กรุณากรอก Username" })}
+            />
+            {errors.username && (
+              <span className="text-red-500">{errors.username.message}</span>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-2">Password</label>
+            <input
+              disabled={isLoading}
+              className={`w-full p-2 border rounded ${
+                errors.password ? "border-red-500" : ""
+              }`}
+              type="password"
+              {...register("password", {
+                required: "กรุณากรอก Password"
+              })}
+            />
+            {errors.password && (
+              <span className="text-red-500">{errors.password.message}</span>
+            )}
+          </div>
+
+          {loginError && <div className="text-red-500 mb-4">{loginError}</div>}
+          <Button
+            isDisabled={isLoading}
+            isLoading={isLoading}
+            className="w-full"
+          >
+            {isLoading ? "Logging in..." : "Login"}
+          </Button>
+        </form>
+        <div className="mt-4 w-full flex justify-center hover:text-cyan-950">
+          <Link href={"/register"}>Register</Link>
         </div>
-
-        <div className="mb-4">
-          <label className="block mb-2">Password</label>
-          <input
-            disabled={isLoading}
-            className={`w-full p-2 border rounded ${
-              errors.password ? "border-red-500" : ""
-            }`}
-            type="password"
-            {...register("password", {
-              required: "กรุณากรอก Password"
-            })}
-          />
-          {errors.password && (
-            <span className="text-red-500">{errors.password.message}</span>
-          )}
-        </div>
-
-        {loginError && <div className="text-red-500 mb-4">{loginError}</div>}
-        <Button isDisabled={isLoading} isLoading={isLoading}>
-          {isLoading ? "Logging in..." : "Login"}
-        </Button>
-      </form>
+      </div>
     </div>
   );
 };

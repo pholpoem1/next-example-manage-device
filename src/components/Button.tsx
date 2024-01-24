@@ -12,7 +12,7 @@ const Button = ({ children, isDisabled, isLoading, className }: IButton) => {
     <button
       disabled={isDisabled}
       type="submit"
-      className={`bg-blue-500 text-white px-4 py-2 rounded inline-flex ${className}`}
+      className={`bg-blue-500 text-white px-4 py-2 rounded justify-center flex ${className}`}
     >
       {isLoading && (
         <svg

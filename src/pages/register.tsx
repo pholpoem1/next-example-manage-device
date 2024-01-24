@@ -9,6 +9,7 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Button from "@/components/Button";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 interface FormData {
   username: string;
@@ -150,9 +151,17 @@ const Register = () => {
         )}
 
         <div className="relative mb-4">
-          <Button isDisabled={isLoading} isLoading={isLoading}>
+          <Button
+            isDisabled={isLoading}
+            isLoading={isLoading}
+            className="w-full"
+          >
             <span>{isLoading ? "Registering..." : "Register"}</span>
           </Button>
+
+          <div className="mt-4 w-full flex justify-center hover:text-cyan-950">
+            <Link href={"/login"}>Login</Link>
+          </div>
         </div>
       </form>
     </div>

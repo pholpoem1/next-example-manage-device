@@ -1,6 +1,7 @@
 import { deleteCookies } from "@/utils/cookies";
 import axios, { AxiosError } from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { RedirectType, redirect } from "next/navigation";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {

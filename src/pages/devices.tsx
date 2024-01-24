@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, Fragment, CSSProperties } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Navbar from "@/components/Navbar";
 import { Col, List, Row, Skeleton, message } from "antd";
 import ConfirmModal from "@/components/ConfirmModal";
@@ -9,6 +9,8 @@ import Button from "@/components/Button";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Joi from "joi";
 import { joiResolver } from "@hookform/resolvers/joi";
+import { redirect } from "next/navigation";
+import { useRouter } from "next/router";
 
 const PAGE_SIZE = 5;
 const style: CSSProperties = {
@@ -35,6 +37,7 @@ const Devices = () => {
   const [idDelete, setIdDelete] = useState("");
   const [messageApi, contextHolder] = message.useMessage();
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const schema = Joi.object({
     device_name: Joi.string().required(),
@@ -52,7 +55,6 @@ const Devices = () => {
     handleSubmit,
     formState: { errors },
     reset,
-    getValues,
     setValue,
     watch
   } = methods;
@@ -63,9 +65,11 @@ const Devices = () => {
 
   const fetchDevices = async () => {
     try {
-      const { data } = await axios.get(
+      const response = await axios.get(
         `/api/devices?page=${page}&page_size=${PAGE_SIZE}`
       );
+
+      const data = response.data;
 
       setDevicesList(data.devices);
       setCurrentPage(data.currentPage);
@@ -73,29 +77,56 @@ const Devices = () => {
 
       setInitLoading(false);
     } catch (error) {
+      const { response } = error as AxiosError;
+
+      console.log("error :>> ", error);
+
       setInitLoading(false);
+
+      messageApi.open({
+        type: "error",
+        content: response?.statusText
+      });
+
       console.error("เกิดข้อผิดพลาดในการโหลดข้อมูล devices", error);
+
+      if (response?.status === 401 || response?.status === 403) {
+        router.replace("/login");
+      }
     }
   };
 
   const handelDeleteDevice = async () => {
-    if (idDelete) {
-      const response = await axios.get(`/api/devices/delete/${idDelete}`);
+    try {
+      if (idDelete) {
+        const response = await axios.get(`/api/devices/delete/${idDelete}`);
 
-      if (response.status === 200) {
-        console.log("response.data.message :>> ", response.data.message);
+        if (response.status === 200) {
+          console.log("response.data.message :>> ", response.data.message);
+          setIsConfirm(false);
+
+          messageApi.open({
+            type: "success",
+            content: response.data.message
+          });
+
+          await fetchDevices();
+        }
+      } else {
         setIsConfirm(false);
-
-        messageApi.open({
-          type: "success",
-          content: response.data.message
-        });
-
-        await fetchDevices();
+        console.log("ID not found :>> ");
       }
-    } else {
-      setIsConfirm(false);
-      console.log("ID not found :>> ");
+    } catch (error) {
+      const { response } = error as AxiosError;
+
+      messageApi.open({
+        type: "error",
+        content: response?.statusText
+      });
+
+      if (response?.status === 401 || response?.status === 403) {
+        router.replace("/login");
+      }
     }
   };
 
@@ -123,8 +154,18 @@ const Devices = () => {
         fetchDevices();
       }
     } catch (error) {
+      const { response } = error as AxiosError;
+
       setIsLoading(false);
-      console.log("error :>> ", error);
+
+      messageApi.open({
+        type: "error",
+        content: response?.statusText
+      });
+
+      if (response?.status === 401 || response?.status === 403) {
+        router.replace("/login");
+      }
     }
   };
 

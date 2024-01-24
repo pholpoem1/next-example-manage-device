@@ -7,5 +7,5 @@ export const deleteCookies = (res: NextApiResponse) => {
     "accessToken=; expires=" + expireDate.toUTCString() + "; Path=/; HttpOnly"
   );
 
-  res.status(200).json({});
+  res.status(401).json({});
 };
