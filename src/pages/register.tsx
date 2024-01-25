@@ -8,8 +8,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Button from "@/components/Button";
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { message } from "antd";
 
 interface FormData {
   username: string;
@@ -19,12 +19,11 @@ interface FormData {
 }
 
 const Register = () => {
-  const router = useRouter();
-
   const [showPassword, setShowPassword] = useState(false);
   const [registerError, setRegisterError] = useState<string>("");
   const [registerSuccess, setRegisterSuccess] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const schema = Joi.object({
     username: Joi.string().required(),
@@ -43,7 +42,8 @@ const Register = () => {
     register,
     handleSubmit,
     formState: { errors },
-    watch
+    watch,
+    setValue
   } = methods;
 
   const togglePasswordVisibility = () => {
@@ -57,11 +57,17 @@ const Register = () => {
 
       setIsLoading(false);
       if (response.status === 200) {
+        setValue("username", "");
+        setValue("email", "");
+        setValue("password", "");
+        setValue("confirmPassword", "");
+
         setRegisterSuccess("ลงทะเบียนเรียบร้อย");
 
-        setTimeout(() => {
-          router.push("/login");
-        }, 500);
+        messageApi.open({
+          type: "success",
+          content: "ลงทะเบียนเรียบร้อย"
+        });
       } else {
         setRegisterError("เกิดข้อผิดพลาดในการลงทะเบียน");
       }
@@ -73,6 +79,8 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
+      {contextHolder}
+
       <form
         className="w-full max-w-md bg-white p-8 rounded shadow-md"
         onSubmit={handleSubmit(onSubmit)}

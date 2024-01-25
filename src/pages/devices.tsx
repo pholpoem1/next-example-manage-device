@@ -198,6 +198,7 @@ const Devices = () => {
                     errors.device_name ? "border-red-500" : ""
                   }`}
                   type="text"
+                  disabled={isLoading}
                   {...register("device_name", {
                     required: "กรุณากรอก divice name"
                   })}
@@ -211,6 +212,7 @@ const Devices = () => {
                   className={`w-full p-2 border rounded ${
                     errors.type ? "border-red-500" : ""
                   }`}
+                  disabled={isLoading}
                   type="text"
                   {...register("type", {
                     required: "กรุณากรอก type"
@@ -225,6 +227,7 @@ const Devices = () => {
                   className={`w-full p-2 border rounded ${
                     errors.description ? "border-red-500" : ""
                   }`}
+                  disabled={isLoading}
                   type="text"
                   {...register("description", {
                     required: "กรุณากรอก description"

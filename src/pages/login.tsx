@@ -5,7 +5,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import Joi from "joi";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Button from "@/components/Button";
-import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
