@@ -7,10 +7,13 @@ export function middleware(request: NextRequest) {
 
   try {
     if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-    if (pathname === "/" && token) {
-      return NextResponse.redirect(new URL("/devices", request.url));
+      if (pathname !== "/login") {
+        return NextResponse.redirect(new URL("/login", request.url));
+      }
+    } else {
+      if (pathname === "/" || pathname === "/login") {
+        return NextResponse.redirect(new URL("/devices", request.url));
+      }
     }
 
     NextResponse.next();
@@ -22,5 +25,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/devices/:path*", "/api/devices/:path*"]
+  matcher: ["/", "/devices/:path*", "/api/devices/:path*", "/login/:path*"]
 };
